@@ -34,9 +34,9 @@ def stock_zt_pool_previous(date:datetime.date):
         json.dump(stockDict, f)
 
 def check_today_1_to_2():
-    date = datetime.date.today()
-    startTime = date.strftime("%Y-%m-%d 09:15:00")
-    endTime = date.strftime("%Y-%m-%d 09:30:00")
+    # date = datetime.date.today()
+    # startTime = date.strftime("%Y-%m-%d 09:15:00")
+    # endTime = date.strftime("%Y-%m-%d 09:30:00")
     stockDict = {}
     with open("zt_pool_previous.json", "r") as f:
         stockDict = json.load(f)
@@ -54,11 +54,12 @@ def check_today_1_to_2():
         if not maxMtAmt:
             continue
         print(code, "close:", preClose, " maxMtAmt:", maxMtAmt)
-        stock_zh_a_hist_min_em_df = ak.stock_zh_a_hist_min_em(symbol=code, start_date=startTime, end_date=endTime, period="1", adjust="")
+        # stock_zh_a_hist_min_em_df = ak.stock_zh_a_hist_min_em(symbol=code, start_date=startTime, end_date=endTime, period="1", adjust="")
+        stock_zh_a_hist_min_em_df = ak.stock_zh_a_hist_pre_min_em(symbol=code, start_time="09:26:00", end_time="09:26:00")
         price = stock_zh_a_hist_min_em_df.loc[0]["开盘"]
-        amt = stock_zh_a_hist_min_em_df.loc[0]["成交额"]
+        amt = stock_zh_a_hist_min_em_df.loc[0]["成交量"]
         print("开盘:", price)
-        print("成交额:", amt)
+        print("成交量:", amt)
         jjb = amt / maxMtAmt
         if jjb > 1.2:
             superPrice.append(code)
@@ -67,7 +68,7 @@ def check_today_1_to_2():
         elif jjb > 0.5:
             hasPrice.append(code)
         chg = (price - preClose) / preClose
-        if chg < 0.5:
+        if chg < 0.05:
             if jjb > 0.4:
                 easy_2ban.append(code)
         else:  
